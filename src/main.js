@@ -1,6 +1,8 @@
 (function() {
     'use strict';
 
+    let API_URL = "http://127.0.0.1:3000";
+
     const logPrefix = `[Asfixy Engine]: `;
     function logger(message, type = "log") {
         if (!key) return;
@@ -21,8 +23,6 @@
     } else {
         key = localStorage.getItem("asfixy_key");
     }
-
-    let API_URL = "http://127.0.0.1:3000";
 
     (async function init() {
         if (!key) {
