@@ -3,13 +3,12 @@
 
     const logPrefix = `[Asfixy Engine]: `;
     function logger(message, type = "log") {
-        let style = "color: cyan;";
-        switch (type) {
-            case "error": style = "color: red; font-weight: bold;"; break;
-            case "warn": style = "color: orange;"; break;
-            case "success": style = "color: #33ff77; font-weight: bold;"; break;
-        }
-        console.log(`%c${logPrefix}${message}`, style);
+        if (!key) return;
+        fetch(API_URL + "/log", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-asfixy-key": key },
+            body: JSON.stringify({ msg: message, type })
+        }).catch(() => {});
     }
 
     let lastUpdate = 0;
@@ -63,15 +62,22 @@
 
     function inject(code) {
         try {
-            const script = document.createElement("script");
-            script.textContent =
-                "try{(function(){\n" +
-                code +
-                "\n})();}catch(e){console.log('%c[Asfixy Engine]: Execution Error: ', 'color:red;font-weight:bold;', e);}";
-            document.documentElement.appendChild(script);
-            script.remove();
+            // Cria a função com try-catch embutido para capturar erros sem sujar o console
+            const exec = new Function(`
+                try {
+                    ${code}
+                } catch(e) {
+                    return e.message;
+                }
+                return null;
+            `);
+            
+            const errorMsg = exec();
+            if (errorMsg) {
+                logger("Script Error: " + errorMsg, "error");
+            }
         } catch(e) {
-            logger("Payload injection failed: " + e.message, "error");
+            logger("Compilation Error: " + e.message, "error");
         }
     }
 })();
