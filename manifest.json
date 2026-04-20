@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Asfixy Engine Injection",
+  "version": "1.0",
+  "permissions": ["scripting"],
+  "host_permissions": [
+    "https://asfixy-api.onrender.com/*",
+    "https://orteil.dashnet.org/cookieclicker/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://orteil.dashnet.org/cookieclicker/*"],
+      "js": ["src/main.js"],
+      "run_at": "document_idle",
+      "world": "MAIN"
+    }
+  ]
+}
